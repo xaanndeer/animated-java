@@ -80,6 +80,7 @@ declare global {
 	}
 
 	interface Cube {
+		light_emission: number
 		rotationInvalid: boolean
 	}
 

@@ -138,10 +138,7 @@ export default async function compileResourcePack(options: {
 		}
 	}
 
-	if (aj.enable_plugin_mode) {
-		// Do nothing
-		console.log('Plugin mode enabled. Skipping resource pack export.')
-	} else if (aj.resource_pack_export_mode === 'raw') {
+	if (aj.resource_pack_export_mode === 'raw') {
 		// Clean up old files
 		PROGRESS_DESCRIPTION.set('Removing Old Resource Pack Files...')
 		PROGRESS.set(0)
@@ -167,6 +164,7 @@ export default async function compileResourcePack(options: {
 		ajmeta.files = new Set(exportedFiles.keys())
 		ajmeta.files.delete(blockAtlasPath)
 		ajmeta.write()
+		ajmeta.files.forEach(file => console.log(file))
 
 		PROGRESS_DESCRIPTION.set('Writing Resource Pack...')
 		PROGRESS.set(0)
@@ -215,18 +213,18 @@ export default async function compileResourcePack(options: {
 }
 
 function createSingleVariantItemDefinition(model: IRenderedVariantModel): IItemDefinition {
+	const tintIndices = Array.from(model.model?.tint_indices ?? new Set<number>())
 	return {
 		model: {
 			type: 'minecraft:model',
 			model: model.resource_location,
-			tints: [
-				{
-					type: 'minecraft:dye',
-					default: [1, 1, 1],
-				},
-			],
+			tints: tintIndices.map((_, index) => ({
+				type: 'minecraft:custom_model_data',
+				index: index,
+				default: [1, 1, 1],
+			})),
 		},
-	}
+	};
 }
 
 function createMultiVariantItemDefinition(
@@ -234,6 +232,7 @@ function createMultiVariantItemDefinition(
 	model: IRenderedVariantModel,
 	rig: IRenderedRig
 ): IItemDefinition {
+	const tintIndices = Array.from(model.model?.tint_indices ?? new Set<number>())
 	const itemDefinition: IItemDefinition & {
 		model: { type: 'minecraft:select'; property: 'minecraft:custom_model_data' }
 	} = {
@@ -245,12 +244,11 @@ function createMultiVariantItemDefinition(
 				type: 'minecraft:model',
 				model: model.resource_location,
 			},
-			tints: [
-				{
-					type: 'minecraft:dye',
-					default: [1, 1, 1],
-				},
-			],
+			tints: tintIndices.map((_, index) => ({
+				type: 'minecraft:custom_model_data',
+				index: index,
+				default: [1, 1, 1],
+			})),
 		},
 	}
 

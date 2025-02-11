@@ -535,13 +535,6 @@
 	/>
 
 	{#if $enablePluginMode}
-		<LineInput
-			label={translate('dialog.blueprint_settings.display_item.title')}
-			tooltip={translate('dialog.blueprint_settings.display_item.description')}
-			bind:value={displayItem}
-			defaultValue={defaultValues.display_item}
-			valueChecker={displayItemChecker}
-		/>
 
 		<Checkbox
 			label={translate('dialog.blueprint_settings.baked_animations.title')}
@@ -550,6 +543,24 @@
 			defaultValue={defaultValues.baked_animations}
 		/>
 
+		<Select
+			label={translate('dialog.blueprint_settings.target_minecraft_version.title')}
+			tooltip={translate('dialog.blueprint_settings.target_minecraft_version.description')}
+			options={Object.fromEntries(Object.keys(mcbFiles).map(v => [v, v]))}
+			defaultOption={Object.keys(mcbFiles).at(-1) || '1.21.2'}
+			bind:value={targetMinecraftVersion}
+		/>
+
+		{#if $targetMinecraftVersion !== '1.21.4'}
+			<LineInput
+				label={translate('dialog.blueprint_settings.display_item.title')}
+				tooltip={translate('dialog.blueprint_settings.display_item.description')}
+				bind:value={displayItem}
+				defaultValue={defaultValues.display_item}
+				valueChecker={displayItemChecker}
+			/>
+			{/if}
+
 		<FileSelect
 			label={translate('dialog.blueprint_settings.json_file.title')}
 			tooltip={translate('dialog.blueprint_settings.json_file.description')}
@@ -557,6 +568,44 @@
 			defaultValue={defaultValues.json_file}
 			valueChecker={jsonFileChecker}
 		/>
+
+		<SectionHeader
+			label={translate('dialog.blueprint_settings.resource_pack_settings.title')}
+		/>
+
+		<Select
+			label={translate('dialog.blueprint_settings.resource_pack_export_mode.title')}
+			tooltip={translate('dialog.blueprint_settings.resource_pack_export_mode.description')}
+			options={{
+				raw: translate('dialog.blueprint_settings.resource_pack_export_mode.options.raw'),
+				none: translate('dialog.blueprint_settings.resource_pack_export_mode.options.none'),
+				zip: translate('dialog.blueprint_settings.resource_pack_export_mode.options.zip'),
+			}}
+			defaultOption={'raw'}
+			bind:value={resourcePackExportMode}
+		/>
+
+		{#if $resourcePackExportMode !== 'none'}
+
+			{#if $resourcePackExportMode === 'raw'}
+				<FolderSelect
+					label={translate('dialog.blueprint_settings.resource_pack.title')}
+					tooltip={translate('dialog.blueprint_settings.resource_pack.description')}
+					bind:value={resourcePack}
+					defaultValue={defaultValues.resource_pack}
+					valueChecker={resourcePackFolderChecker}
+				/>
+			{:else if $resourcePackExportMode === 'zip'}
+				<FileSelect
+					label={translate('dialog.blueprint_settings.resource_pack_zip.title')}
+					tooltip={translate('dialog.blueprint_settings.resource_pack_zip.description')}
+					bind:value={resourcePack}
+					defaultValue={defaultValues.resource_pack}
+					valueChecker={zipChecker}
+				/>
+			{/if}
+		{/if}
+
 	{:else}
 		<Select
 			label={translate('dialog.blueprint_settings.target_minecraft_version.title')}

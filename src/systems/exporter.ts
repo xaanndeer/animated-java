@@ -37,6 +37,11 @@ export function getExportPaths() {
 			'assets/minecraft/models/item/',
 			aj.display_item.split(':').at(-1)! + '.json'
 		)
+		modelExportFolder = PathModule.join(
+			resourcePackFolder,
+			'assets/animated_java/models/blueprint/',
+			aj.export_namespace
+		)
 	} else {
 		modelExportFolder = PathModule.join(
 			resourcePackFolder,

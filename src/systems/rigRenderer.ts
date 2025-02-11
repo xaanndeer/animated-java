@@ -35,6 +35,7 @@ export interface IRenderedFace {
 }
 
 export interface IRenderedElement {
+	light_emission: number
 	from: number[]
 	to: number[]
 	shade?: boolean
@@ -59,6 +60,7 @@ export interface IRenderedModel {
 	display?: {
 		head: { rotation: [0, 180, 0] }
 	}
+	tint_indices?: Set<number>
 }
 
 export interface IRenderedNode {
@@ -238,6 +240,8 @@ function renderCube(cube: Cube, rig: IRenderedRig, model: IRenderedModel) {
 		}
 	}
 
+	if(cube.light_emission > 0) element.light_emission = cube.light_emission
+
 	element.faces = {}
 	for (const [face, data] of Object.entries(cube.faces)) {
 		if (!data?.texture) continue
@@ -257,7 +261,11 @@ function renderCube(cube: Cube, rig: IRenderedRig, model: IRenderedModel) {
 			if (resourceLocation) model.textures[texture.id] = resourceLocation
 		}
 		if (data.cullface) renderedFace.cullface = data.cullface
-		if (data.tint >= 0) renderedFace.tintindex = data.tint
+		if (data.tint >= 0) {
+			renderedFace.tintindex = data.tint
+			model.tint_indices ??= new Set<number>
+			model.tint_indices.add(data.tint)
+		}
 		element.faces[face] = renderedFace
 	}
 
@@ -360,14 +368,17 @@ function renderGroup(
 		if (!node.export) continue
 		switch (true) {
 			case node instanceof Group: {
+				// @ts-ignore
 				renderGroup(node, rig, defaultVariant)
 				break
 			}
 			case node instanceof Locator: {
+				// @ts-ignore
 				renderLocator(node, rig)
 				break
 			}
 			case node instanceof TextDisplay: {
+				// @ts-ignore
 				renderTextDisplay(node, rig)
 				break
 			}
@@ -376,14 +387,17 @@ function renderGroup(
 				break
 			}
 			case node instanceof VanillaItemDisplay: {
+				// @ts-ignore
 				renderItemDisplay(node, rig)
 				break
 			}
 			case node instanceof VanillaBlockDisplay: {
+				// @ts-ignore
 				renderBlockDisplay(node, rig)
 				break
 			}
 			case node instanceof Cube: {
+				// @ts-ignore
 				renderCube(node, rig, groupModel.model!)
 				rig.includes_custom_models = true
 				break

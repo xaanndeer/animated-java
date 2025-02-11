@@ -9,7 +9,7 @@ import {
 	getKeyframeExecuteCondition,
 	getKeyframeRepeat,
 	getKeyframeRepeatFrequency,
-	getKeyframeVariant,
+	getKeyframeVariant
 } from '../mods/customKeyframesMod'
 import { EasingKey } from '../util/easing'
 import { resolvePath } from '../util/fileUtil'
@@ -21,7 +21,7 @@ import type {
 	IRenderedModel,
 	IRenderedRig,
 	IRenderedVariant,
-	IRenderedVariantModel,
+	IRenderedVariantModel
 } from './rigRenderer'
 
 type ExportedNodetransform = Omit<
@@ -29,14 +29,15 @@ type ExportedNodetransform = Omit<
 	'type' | 'name' | 'uuid' | 'node' | 'matrix' | 'decomposed' | 'executeCondition'
 > & {
 	matrix: number[]
-	decomposed: {
+	decomposed?: {
 		translation: ArrayVector3
 		left_rotation: ArrayVector4
 		scale: ArrayVector3
 	}
-	pos: ArrayVector3
-	rot: ArrayVector3
-	scale: ArrayVector3
+	pos?: ArrayVector3
+	rot?: ArrayVector3
+	scale?: ArrayVector3
+	head_rot?: ArrayVector2
 	execute_condition?: string
 }
 type ExportedRenderedNode = Omit<
@@ -122,11 +123,11 @@ export interface IExportedJSON {
 		export_namespace: (typeof defaultValues)['export_namespace']
 		bounding_box: (typeof defaultValues)['bounding_box']
 		// Resource Pack Settings
-		custom_model_data_offset: (typeof defaultValues)['custom_model_data_offset']
+		custom_model_data_offset?: (typeof defaultValues)['custom_model_data_offset']
 		// Plugin Settings
 		baked_animations: (typeof defaultValues)['baked_animations']
 	}
-	textures: Record<string, ExportedTexture>
+	textures?: Record<string, ExportedTexture>
 	nodes: Record<string, ExportedRenderedNode>
 	variants: Record<string, ExportedVariant>
 	/**
@@ -202,17 +203,12 @@ function serailizeKeyframe(kf: _Keyframe): ExportedKeyframe {
 }
 
 function serializeVariant(rig: IRenderedRig, variant: IRenderedVariant): ExportedVariant {
-	const json: ExportedVariant = {
+	return {
 		...variant,
 		models: mapObjEntries(variant.models, (uuid, model) => {
-			const json: ExportedVariantModel = {
-				model: model.model,
-				custom_model_data: model.custom_model_data,
-			}
-			return [uuid, json]
+			return [uuid, model.item_model]
 		}),
 	}
-	return json
 }
 
 export function exportJSON(options: {
@@ -238,13 +234,8 @@ export function exportJSON(options: {
 		settings: {
 			export_namespace: aj.export_namespace,
 			bounding_box: aj.bounding_box,
-			custom_model_data_offset: aj.custom_model_data_offset,
 			baked_animations: aj.baked_animations,
 		},
-		textures: mapObjEntries(rig.textures, (_, texture) => [
-			texture.uuid,
-			serializeTexture(texture),
-		]),
 		nodes: mapObjEntries(rig.nodes, (uuid, node) => [uuid, serailizeRenderedNode(node)]),
 		variants: mapObjEntries(rig.variants, (uuid, variant) => [
 			uuid,
@@ -296,15 +287,6 @@ export function exportJSON(options: {
 function serailizeNodeTransform(node: INodeTransform): ExportedNodetransform {
 	const json: ExportedNodetransform = {
 		matrix: node.matrix.elements,
-		decomposed: {
-			translation: node.decomposed.translation.toArray(),
-			left_rotation: node.decomposed.left_rotation.toArray() as ArrayVector4,
-			scale: node.decomposed.scale.toArray(),
-		},
-		pos: node.pos,
-		rot: node.rot,
-		head_rot: node.head_rot,
-		scale: node.scale,
 		interpolation: node.interpolation,
 		commands: node.commands,
 		execute_condition: node.execute_condition,
@@ -326,10 +308,8 @@ function serailizeRenderedNode(node: AnyRenderedNode): ExportedRenderedNode {
 	switch (node.type) {
 		case 'bone': {
 			delete json.boundingBox
-			json.bounding_box = {
-				min: node.bounding_box.min.toArray(),
-				max: node.bounding_box.max.toArray(),
-			}
+			const size = node.bounding_box.getSize(new THREE.Vector3()).toArray();
+			json.bounding_box = [size[0], size[1]];
 			delete json.configs
 			json.configs = { ...node.configs?.variants }
 			const defaultVariant = Variant.getDefault()
