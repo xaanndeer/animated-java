@@ -308,8 +308,8 @@ function serailizeRenderedNode(node: AnyRenderedNode): ExportedRenderedNode {
 	switch (node.type) {
 		case 'bone': {
 			delete json.boundingBox
-			const size = node.bounding_box.getSize(new THREE.Vector3()).toArray();
-			json.bounding_box = [size[0], size[1]];
+			const size = node.bounding_box.getSize(new THREE.Vector3()).toArray()
+			json.bounding_box = [size[0], size[1]]
 			delete json.configs
 			json.configs = { ...node.configs?.variants }
 			const defaultVariant = Variant.getDefault()
