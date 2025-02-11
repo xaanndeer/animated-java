@@ -27,10 +27,12 @@ export function getExportPaths() {
 	if (aj.enable_plugin_mode) {
 		modelExportFolder = PathModule.join(
 			'assets/animated_java/models/blueprint/',
+			aj.export_folder,
 			aj.export_namespace
 		)
 		textureExportFolder = PathModule.join(
 			'assets/animated_java/textures/blueprint/',
+			aj.export_folder,
 			aj.export_namespace
 		)
 		displayItemPath = PathModule.join(
@@ -40,6 +42,7 @@ export function getExportPaths() {
 		modelExportFolder = PathModule.join(
 			resourcePackFolder,
 			'assets/animated_java/models/blueprint/',
+			aj.export_folder,
 			aj.export_namespace
 		)
 	} else {

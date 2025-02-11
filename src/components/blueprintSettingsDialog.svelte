@@ -40,6 +40,7 @@
 	export let textureSizeY: Valuable<number>
 	// Export Settings
 	export let exportNamespace: Valuable<string>
+	export let exportFolder: Valuable<string>
 	export let enablePluginMode: Valuable<boolean>
 	export let resourcePackExportMode: Valuable<string>
 	export let dataPackExportMode: Valuable<string>
@@ -524,6 +525,14 @@
 		tooltip={translate('dialog.blueprint_settings.export_namespace.description')}
 		bind:value={exportNamespace}
 		defaultValue={defaultValues.export_namespace}
+		valueChecker={exportNamespaceChecker}
+	/>
+
+	<LineInput
+		label={translate('dialog.blueprint_settings.export_folder.title')}
+		tooltip={translate('dialog.blueprint_settings.export_folder.description')}
+		bind:value={exportFolder}
+		defaultValue={defaultValues.export_folder}
 		valueChecker={exportNamespaceChecker}
 	/>
 

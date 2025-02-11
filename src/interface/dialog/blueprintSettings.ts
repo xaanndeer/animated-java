@@ -30,6 +30,12 @@ function getSettings() {
 			}
 			return toSafeFuntionName(value)
 		}),
+		exportFolder: new Valuable(Project!.animated_java.export_folder, value => {
+		if (!value) {
+			return defaultValues.export_folder
+		}
+		return toSafeFuntionName(value)
+		}),
 		resourcePackExportMode: new Valuable(
 			Project!.animated_java.resource_pack_export_mode as string
 		),
@@ -81,6 +87,7 @@ function setSettings(settings: ReturnType<typeof getSettings>) {
 	Project.animated_java.enable_plugin_mode = settings.enablePluginMode.get()
 	Project.pluginMode.set(settings.enablePluginMode.get()) // Required to update the project title.
 	Project.animated_java.export_namespace = settings.exportNamespace.get()
+	Project.animated_java.export_folder = settings.exportFolder.get()
 	Project.animated_java.resource_pack_export_mode =
 		settings.resourcePackExportMode.get() as ExportMode
 	Project.animated_java.data_pack_export_mode = settings.dataPackExportMode.get() as ExportMode

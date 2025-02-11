@@ -34,6 +34,7 @@ export default async function compileResourcePack(options: {
 	const itemModelDefinitionsFolder = PathModule.join(
 		resourcePackFolder,
 		'assets/animated_java/items/blueprint/',
+		aj.export_folder,
 		aj.export_namespace
 	)
 

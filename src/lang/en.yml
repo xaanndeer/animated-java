@@ -70,6 +70,9 @@ animated_java.dialog.blueprint_settings.export_namespace.error.empty: The export
 animated_java.dialog.blueprint_settings.export_namespace.error.reserved: The export namespace "{0}" is reserved for internal functionality! Please choose a different namespace.
 animated_java.dialog.blueprint_settings.export_namespace.error.invalid_characters: The export namespace contains invalid characters! Namespaces can only contain letters, numbers, and underscores.
 
+animated_java.dialog.blueprint_settings.export_folder.title: Project Namespace
+animated_java.dialog.blueprint_settings.export_folder.description: The namespace of the project. This namespace will be used to create folders in which the generated files will be saved.
+
 animated_java.dialog.blueprint_settings.enable_plugin_mode.title: Plugin Mode
 animated_java.dialog.blueprint_settings.enable_plugin_mode.description: Whether or not to enable Plugin Mode. Enable when you plan to use a Plugin-based solution instead of a Resource Pack and/or Data Pack.
 
