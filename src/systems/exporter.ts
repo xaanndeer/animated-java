@@ -31,6 +31,7 @@ export function getExportPaths() {
 			aj.export_namespace
 		)
 		textureExportFolder = PathModule.join(
+			resourcePackFolder,
 			'assets/animated_java/textures/blueprint/',
 			aj.export_folder,
 			aj.export_namespace
