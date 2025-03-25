@@ -165,7 +165,6 @@ export default async function compileResourcePack(options: {
 		ajmeta.files = new Set(exportedFiles.keys())
 		ajmeta.files.delete(blockAtlasPath)
 		ajmeta.write()
-		ajmeta.files.forEach(file => console.log(file))
 
 		PROGRESS_DESCRIPTION.set('Writing Resource Pack...')
 		PROGRESS.set(0)

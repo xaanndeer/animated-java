@@ -23,11 +23,14 @@ export function restoreSceneAngle() {
 	scene.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), 0)
 }
 
-function getNodeMatrix(node: OutlinerElement, scale: number) {
+function getNodeMatrix(node: OutlinerElement, scale: number, parentScale = 1) {
 	let matrixWorld = node.mesh.matrixWorld.clone()
 
 	if(node.parent instanceof Group) {
-		matrixWorld = node.parent.mesh.matrixWorld.clone().invert().multiply(node.mesh.matrixWorld.clone())
+		const parentMatrix = node.parent.mesh.matrixWorld.clone()
+		const scaleVec = new THREE.Vector3().setScalar(parentScale)
+		parentMatrix.scale(scaleVec)
+		matrixWorld = parentMatrix.invert().multiply(node.mesh.matrixWorld)
 	}
 
 	const pos = new THREE.Vector3().setFromMatrixPosition(matrixWorld).multiplyScalar(1 / 16)
@@ -173,7 +176,12 @@ export function getFrame(
 			case 'item_display':
 			case 'block_display':
 			case 'bone': {
-				matrix = getNodeMatrix(outlinerNode, node.base_scale)
+				let parentScale = 1
+				if(node.parent) {
+					const parentNode = nodeMap[node.parent]
+					if(parentNode.type == "bone") parentScale = parentNode.base_scale
+				}
+				matrix = getNodeMatrix(outlinerNode, node.base_scale, parentScale)
 				// Only add the frame if the matrix has changed.
 				if (lastFrame && lastFrame.matrix.equals(matrix)) continue
 				// Inherit instant interpolation from parent
