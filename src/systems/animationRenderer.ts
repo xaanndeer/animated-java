@@ -24,7 +24,12 @@ export function restoreSceneAngle() {
 }
 
 function getNodeMatrix(node: OutlinerElement, scale: number) {
-	const matrixWorld = node.mesh.matrixWorld.clone()
+	let matrixWorld = node.mesh.matrixWorld.clone()
+
+	if(node.parent instanceof Group) {
+		matrixWorld = node.parent.mesh.matrixWorld.clone().invert().multiply(node.mesh.matrixWorld.clone())
+	}
+
 	const pos = new THREE.Vector3().setFromMatrixPosition(matrixWorld).multiplyScalar(1 / 16)
 	matrixWorld.setPosition(pos)
 
@@ -220,6 +225,7 @@ export function getFrame(
 			case 'camera':
 			case 'struct': {
 				matrix = getNodeMatrix(outlinerNode, 1)
+				if (lastFrame && lastFrame.matrix.equals(matrix)) continue
 				break
 			}
 		}

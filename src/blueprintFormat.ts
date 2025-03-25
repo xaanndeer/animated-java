@@ -194,12 +194,14 @@ export function updateBoundingBox() {
 		const boundingBoxOverflow = 8
 		width += boundingBoxOverflow
 		height += boundingBoxOverflow
+		Project.animated_java.bounding_box[0] = width
+		Project.animated_java.bounding_box[1] = height
 	} else {
 		width = Project.animated_java.bounding_box[0]
 		height = Project.animated_java.bounding_box[1]
 	}
 
-	const boundingBox = new THREE.BoxGeometry(width * 2, height, width * 2)
+	const boundingBox = new THREE.BoxGeometry(width, height, width)
 	Project.visualBoundingBox = new THREE.LineSegments(
 		new THREE.EdgesGeometry(boundingBox),
 		new THREE.LineBasicMaterial({ color: '#855000' })
